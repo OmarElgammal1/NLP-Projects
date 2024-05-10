@@ -28,4 +28,4 @@ def load_model(model_type, dataset_name):
     return model
 
 # demo
-# predict('I love this movie!', 'dt', 'twitter')
+# predict('I love this movie!', 'rf', 'twitter')
