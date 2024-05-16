@@ -53,6 +53,7 @@ class App(customtkinter.CTk):
 
         self.resultLabel = None
         self.resultList = []
+        self.titleList = []
 
     def eventTabChange(self):
         print(f"Tab changed to {self.tabview.get()} with index {self.tabview.index(self.tabview.get())}")
@@ -62,33 +63,43 @@ class App(customtkinter.CTk):
         modelIndex = self.tabview.index(self.tabview.get())
         dataset_name = MODELCORRESPONDING[modelIndex]
         results = []
-
+        titles = []
         for i in range(len(self.checkBoxChoicesCorressponding[modelIndex])):
             if self.checkBoxChoices[modelIndex][i+5].get() == 1:
                 txt = self.checkBoxChoices[modelIndex][i] + ": "
                 res = example.predict(self.tabviewEntries[modelIndex].get('0.0', 'end'), self.checkBoxChoicesCorressponding[modelIndex][i], dataset_name)
                 print(res)
                 opinion = MODELRESULTINTERPRETATION[modelIndex][res[0]]
-                results.append(txt + opinion)
+                titles.append(txt)
+                results.append(opinion)
         results = [i for i in results]
         print(results)
         # example.predict(self.tabviewEntries[self.tabview.index(self.tabview.get())].get('0.0', 'end'), 'rf', dataset_name)
-        self.buildTopWindow(results, modelIndex)
+        self.buildTopWindow(titles, results)
         self.TLWindow.focus()
 
 
-    def buildTopWindow(self, results, mode=0):
+    def buildTopWindow(self, titles, results):
         self.TLWindow = None
         self.resultLabel = None
         self.resultList = []
-        self.TLWindow = customtkinter.CTkToplevel(self, width=400, height=100+len(results) * 50)
-        self.resultLabel = customtkinter.CTkLabel(self.TLWindow, width=310, height=40, text='Results', font=("Robotic", 24), bg_color='red')
-        self.resultLabel.place(x=0,y=0)
+        self.titleList = []
+
+        self.TLWindow = customtkinter.CTkToplevel(self, width=400, height=50+len(results) * 50)
+        self.TLWindow.resizable(False, False)
+        self.TLWindow.title('Results')
+
+        self.resultLabel = customtkinter.CTkLabel(self.TLWindow, width=400, height=40, text='Results', font=("Robotic", 24))#, bg_color='red')
+        self.resultLabel.place(x=0,y=5)
 
         for i in range(len(results)):
-            self.resultList.append(customtkinter.CTkLabel(self.TLWindow, width=320, height=40, text=results[i], bg_color='blue'))
-            self.resultList[i].place(x=0, y=50+i*50)
+            self.titleList.append(customtkinter.CTkLabel(self.TLWindow, width=150, height=40, text=titles[i].replace('\n', ' '), font=("Robotic", 24), anchor='w'))#, bg_color='blue'))
+            self.titleList[i].place(x=10, y=55+i*50)
 
+            self.resultList.append(customtkinter.CTkLabel(self.TLWindow, width=150, height=40, text=results[i], font=("Robotic", 24), anchor='e'))#, bg_color='blue'))
+            self.resultList[i].place(x=390, y=55+i*50, anchor='ne')
+
+        self.TLWindow.focus()
 
 if __name__ == "__main__":
     app = App()
