@@ -7,7 +7,7 @@ import customtkinter
 MODELS = ['Twitter Sentiment Analysis', 'Movie Review Sentiment Analysis']
 MODELCORRESPONDING = ['twitter', 'movie']
 
-MODELRESULTINTERPRETATION = [['Negative 😓', 'Neutral 😑', 'Positive 😁'],[]]
+MODELRESULTINTERPRETATION = [['Negative 😓', 'Neutral 😑', 'Positive 😁'],['Very Negative 😭', 'Negative 😓', 'Neutral 😑', 'Positive 🙂', 'Very Positive 😁']]
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -51,6 +51,9 @@ class App(customtkinter.CTk):
         self.predict_button = customtkinter.CTkButton(self, text="Predict", command=self.eventPredict, width=150, height=40)
         self.predict_button.place(x=930, y=520)
 
+        self.resultLabel = None
+        self.resultList = []
+
     def eventTabChange(self):
         print(f"Tab changed to {self.tabview.get()} with index {self.tabview.index(self.tabview.get())}")
 
@@ -59,21 +62,32 @@ class App(customtkinter.CTk):
         modelIndex = self.tabview.index(self.tabview.get())
         dataset_name = MODELCORRESPONDING[modelIndex]
         results = []
+
         for i in range(len(self.checkBoxChoicesCorressponding[modelIndex])):
             if self.checkBoxChoices[modelIndex][i+5].get() == 1:
-                results.append(example.predict(self.tabviewEntries[modelIndex].get('0.0', 'end'), self.checkBoxChoicesCorressponding[modelIndex][i], dataset_name))
-        results = [i[0] for i in results]
+                txt = self.checkBoxChoices[modelIndex][i] + ": "
+                res = example.predict(self.tabviewEntries[modelIndex].get('0.0', 'end'), self.checkBoxChoicesCorressponding[modelIndex][i], dataset_name)
+                print(res)
+                opinion = MODELRESULTINTERPRETATION[modelIndex][res[0]]
+                results.append(txt + opinion)
+        results = [i for i in results]
         print(results)
         # example.predict(self.tabviewEntries[self.tabview.index(self.tabview.get())].get('0.0', 'end'), 'rf', dataset_name)
-        self.buildTopWindow()
+        self.buildTopWindow(results, modelIndex)
         self.TLWindow.focus()
 
 
-    def buildTopWindow(self):
-        if self.TLWindow is None or not self.TLWindow.winfo_exists():
-            self.TLWindow = customtkinter.CTkToplevel(self, width=400, height=200)
-        else:
-            self.TLWindow.focus()
+    def buildTopWindow(self, results, mode=0):
+        self.TLWindow = None
+        self.resultLabel = None
+        self.resultList = []
+        self.TLWindow = customtkinter.CTkToplevel(self, width=400, height=100+len(results) * 50)
+        self.resultLabel = customtkinter.CTkLabel(self.TLWindow, width=310, height=40, text='Results', font=("Robotic", 24), bg_color='red')
+        self.resultLabel.place(x=0,y=0)
+
+        for i in range(len(results)):
+            self.resultList.append(customtkinter.CTkLabel(self.TLWindow, width=320, height=40, text=results[i], bg_color='blue'))
+            self.resultList[i].place(x=0, y=50+i*50)
 
 
 if __name__ == "__main__":
