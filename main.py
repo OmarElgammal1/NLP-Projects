@@ -32,10 +32,10 @@ class App(customtkinter.CTk):
         # self.tabview.tab("Tab 2").grid_columnconfigure(0, weight=1)
 
         self.tabviewEntries = []
-        self.checkBoxChoicesCorressponding = [['nb', 'rf', 'dt', 'knn', 'lg'], []]
+        self.checkBoxChoicesCorressponding = [['nb', 'rf', 'dt', 'knn', 'lg'], ['nb', 'dt', 'lg']]
         self.checkBoxChoices = [
             ['Naive Bayes', 'Random Forest', 'Decision Tree', 'KNN', 'Logistic\nRegression'],
-            []
+            ['Naive Bayes', 'Decision Tree', 'Logistic\nRegression']
         ]
         for i in range(len(MODELS)):
             self.tabviewEntries.append(customtkinter.CTkTextbox(self.tabview.tab(MODELS[i]), width=870, height=445))
@@ -64,10 +64,15 @@ class App(customtkinter.CTk):
         dataset_name = MODELCORRESPONDING[modelIndex]
         results = []
         titles = []
+        # print(self.checkBoxChoices)
         for i in range(len(self.checkBoxChoicesCorressponding[modelIndex])):
-            if self.checkBoxChoices[modelIndex][i+5].get() == 1:
+            if self.checkBoxChoices[modelIndex][i+len(self.checkBoxChoicesCorressponding[modelIndex])].get() == 1:
                 txt = self.checkBoxChoices[modelIndex][i] + ": "
-                res = example.predict(self.tabviewEntries[modelIndex].get('0.0', 'end'), self.checkBoxChoicesCorressponding[modelIndex][i], dataset_name)
+                res = None
+                if modelIndex == 0:
+                    res = example.predict(self.tabviewEntries[modelIndex].get('0.0', 'end'), self.checkBoxChoicesCorressponding[modelIndex][i], dataset_name, 'vectorizer.pkl')
+                else:
+                    res = example.predict(self.tabviewEntries[modelIndex].get('0.0', 'end'), self.checkBoxChoicesCorressponding[modelIndex][i], dataset_name, 'vectorizer_movies.pkl')
                 print(res)
                 opinion = MODELRESULTINTERPRETATION[modelIndex][res[0]]
                 titles.append(txt)
@@ -85,11 +90,11 @@ class App(customtkinter.CTk):
         self.resultList = []
         self.titleList = []
 
-        self.TLWindow = customtkinter.CTkToplevel(self, width=400, height=50+len(results) * 50)
+        self.TLWindow = customtkinter.CTkToplevel(self, width=420, height=50+len(results) * 50)
         self.TLWindow.resizable(False, False)
         self.TLWindow.title('Results')
 
-        self.resultLabel = customtkinter.CTkLabel(self.TLWindow, width=400, height=40, text='Results', font=("Robotic", 24))#, bg_color='red')
+        self.resultLabel = customtkinter.CTkLabel(self.TLWindow, width=420, height=40, text='Results', font=("Robotic", 24))#, bg_color='red')
         self.resultLabel.place(x=0,y=5)
 
         for i in range(len(results)):
@@ -97,7 +102,7 @@ class App(customtkinter.CTk):
             self.titleList[i].place(x=10, y=55+i*50)
 
             self.resultList.append(customtkinter.CTkLabel(self.TLWindow, width=150, height=40, text=results[i], font=("Robotic", 24), anchor='e'))#, bg_color='blue'))
-            self.resultList[i].place(x=390, y=55+i*50, anchor='ne')
+            self.resultList[i].place(x=410, y=55+i*50, anchor='ne')
 
         self.TLWindow.focus()
 
