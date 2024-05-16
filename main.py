@@ -4,7 +4,10 @@ import tkinter.messagebox
 import customtkinter
 
 # INSERT YOUR MODEL'S NAME HERE
-MODELS = ['NLP 1', 'NLP 2', 'NLP 3', 'NLP 4', 'NLP 5']
+MODELS = ['Twitter Sentiment Analysis', 'Movie Review Sentiment Analysis']
+MODELCORRESPONDING = ['twitter', 'movie']
+
+MODELRESULTINTERPRETATION = [['Negative 😓', 'Neutral 😑', 'Positive 😁'],[]]
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -23,16 +26,28 @@ class App(customtkinter.CTk):
         self.tabview.place(x=20, y=10)
         self.tabview.add(MODELS[0])
         self.tabview.add(MODELS[1])
-        self.tabview.add(MODELS[2])
-        self.tabview.add(MODELS[3])
-        self.tabview.add(MODELS[4])
+        # self.tabview.add(MODELS[2])
+        # self.tabview.add(MODELS[3])
+        # self.tabview.add(MODELS[4])
         # self.tabview.tab("CTkTabview").grid_columnconfigure(0, weight=1)  # configure grid of individual tabs
         # self.tabview.tab("Tab 2").grid_columnconfigure(0, weight=1)
 
         self.tabviewEntries = []
-        for i in range(5):
-            self.tabviewEntries.append(customtkinter.CTkTextbox(self.tabview.tab(MODELS[i]), width=1030, height=445))
+        self.checkBoxChoicesCorressponding = [['nb', 'rf', 'dt', 'knn', 'lg'], []]
+        self.checkBoxChoices = [
+            ['Naive Bayes', 'Random Forest', 'Decision Tree', 'KNN', 'Logistic\nRegression'],
+            []
+        ]
+        for i in range(len(MODELS)):
+            self.tabviewEntries.append(customtkinter.CTkTextbox(self.tabview.tab(MODELS[i]), width=870, height=445))
             self.tabviewEntries[i].place(x=10, y=0)
+
+        # self.
+
+            for j in range(len(self.checkBoxChoices[i])):
+                self.checkBoxChoices[i].append(customtkinter.CTkCheckBox(self.tabview.tab(MODELS[i]), text=self.checkBoxChoices[i][j], font=("Arial", 16), height=40, width = 100))
+                self.checkBoxChoices[i][-1].place(x=900, y=10 + 95*j)
+
 
         self.predict_button = customtkinter.CTkButton(self, text="Predict", command=self.eventPredict, width=150, height=40)
         self.predict_button.place(x=930, y=520)
@@ -42,7 +57,15 @@ class App(customtkinter.CTk):
 
     def eventPredict(self):
         print(f"Predict button pressed in tab: {self.tabview.get()}, index: {self.tabview.index(self.tabview.get())}")
-        example.predict(self.tabviewEntries[self.tabview.index(self.tabview.get())].get('0.0', 'end'))
+        modelIndex = self.tabview.index(self.tabview.get())
+        dataset_name = MODELCORRESPONDING[modelIndex]
+        results = []
+        for i in range(len(self.checkBoxChoicesCorressponding[modelIndex])):
+            if self.checkBoxChoices[modelIndex][i+5].get() == 1:
+                results.append(example.predict(self.tabviewEntries[modelIndex].get('0.0', 'end'), self.checkBoxChoicesCorressponding[modelIndex][i], dataset_name))
+        results = [i[0] for i in results]
+        print(results)
+        # example.predict(self.tabviewEntries[self.tabview.index(self.tabview.get())].get('0.0', 'end'), 'rf', dataset_name)
 
 
 if __name__ == "__main__":

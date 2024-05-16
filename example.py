@@ -3,10 +3,11 @@ from sklearn.ensemble import RandomForestClassifier
 def predict(text: str, model_type: str, dataset_name: str):
     with open('vectorizer.pkl', 'rb') as file:
         vectorizer = pickle.load(file)
+    # print(text)
     model = load_model(model_type, dataset_name)
     text_vector = vectorizer.transform([text])
     prediction = model.predict(text_vector)
-    print(prediction)
+    return prediction
 
 
 def load_model(model_type, dataset_name):
@@ -28,8 +29,9 @@ def load_model(model_type, dataset_name):
     return model
 
 # demo
-predict('I love this movie!', 'dt', 'twitter')
-predict('I love this movie!', 'rf', 'twitter')
-predict('I love this movie!', 'nb', 'twitter')
-predict('I love this movie!', 'knn', 'twitter')
-predict('I love this movie!', 'lg', 'twitter')
+if __name__ == '__main__':
+    predict('I love this movie!', 'dt', 'twitter')
+    predict('I love this movie!', 'rf', 'twitter')
+    predict('I love this movie!', 'nb', 'twitter')
+    predict('I love this movie!', 'knn', 'twitter')
+    predict('I love this movie!', 'lg', 'twitter')
