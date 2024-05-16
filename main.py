@@ -12,7 +12,6 @@ MODELRESULTINTERPRETATION = [['Negative 😓', 'Neutral 😑', 'Positive 😁'],
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
-
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
@@ -20,7 +19,7 @@ class App(customtkinter.CTk):
         # configure window
         self.title("NLP Text Classification")
         self.geometry(f"{1100}x{580}")
-
+        self.TLWindow = None
         # create tabview
         self.tabview = customtkinter.CTkTabview(self, width=1060, height=500, command=self.eventTabChange)
         self.tabview.place(x=20, y=10)
@@ -66,6 +65,15 @@ class App(customtkinter.CTk):
         results = [i[0] for i in results]
         print(results)
         # example.predict(self.tabviewEntries[self.tabview.index(self.tabview.get())].get('0.0', 'end'), 'rf', dataset_name)
+        self.buildTopWindow()
+        self.TLWindow.focus()
+
+
+    def buildTopWindow(self):
+        if self.TLWindow is None or not self.TLWindow.winfo_exists():
+            self.TLWindow = customtkinter.CTkToplevel(self, width=400, height=200)
+        else:
+            self.TLWindow.focus()
 
 
 if __name__ == "__main__":
