@@ -1,7 +1,7 @@
 import pickle
 from sklearn.ensemble import RandomForestClassifier
-def predict(text: str, model_type: str, dataset_name: str):
-    with open('vectorizer.pkl', 'rb') as file:
+def predict(text: str, model_type: str, dataset_name: str, vectorizer: str = 'vectorizer.pkl'):
+    with open(vectorizer, 'rb') as file:
         vectorizer = pickle.load(file)
     # print(text)
     model = load_model(model_type, dataset_name)
@@ -35,3 +35,7 @@ if __name__ == '__main__':
     predict('I love this movie!', 'nb', 'twitter')
     predict('I love this movie!', 'knn', 'twitter')
     predict('I love this movie!', 'lg', 'twitter')
+    predict('I love this movie!', 'dt', 'movie', 'vectorizer_movies.pkl')
+    predict('I love this movie!', 'rf', 'movie', 'vectorizer_movies.pkl')
+    predict('I love this movie!', 'nb', 'movie', 'vectorizer_movies.pkl')
+    predict('I love this movie!', 'lg', 'movie', 'vectorizer_movies.pkl')
