@@ -3,7 +3,6 @@ import tkinter
 import tkinter.messagebox
 import customtkinter
 
-# INSERT YOUR MODEL'S NAME HERE
 MODELS = ['Twitter Sentiment Analysis', 'Movie Review Sentiment Analysis']
 MODELCORRESPONDING = ['twitter', 'movie']
 
